@@ -27,7 +27,7 @@ const formatDate = (timestamp) =>
 /* Screen: one list                                                    */
 /* ------------------------------------------------------------------ */
 
-export default function ListScreen({ slug, me, onBack, onTouch }) {
+export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
   const [list, setList] = useState(null);
   const [status, setStatus] = useState("loading"); // loading | ok | missing | purged | offline
   const [sync, setSync] = useState("");
@@ -108,6 +108,7 @@ export default function ListScreen({ slug, me, onBack, onTouch }) {
       if (loaded.purgeAt && Date.now() > loaded.purgeAt) {
         try { await deleteList(slug); } catch { /* the nightly job will get it */ }
         setStatus("purged");
+        onGone(slug);
         return;
       }
       // Join as a member, with the same rights as whoever created the list.
@@ -128,7 +129,7 @@ export default function ListScreen({ slug, me, onBack, onTouch }) {
       onTouch(next);
     })();
     return () => { alive = false; };
-  }, [slug, me.id, me.name, onTouch]);
+  }, [slug, me.id, me.name, onTouch, onGone]);
 
   /* realtime ---------------------------------------------------------- */
   useEffect(() => {

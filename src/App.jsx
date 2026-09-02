@@ -59,6 +59,36 @@ export default function App() {
   const [recent, setRecent] = useState([]);
   const idRef = useRef(null);
 
+  /** Drops one entry from the locally cached list of recently opened lists. */
+  const forget = useCallback((slug) => {
+    setRecent((previous) => {
+      const next = previous.filter((entry) => entry.slug !== slug);
+      prefs.set("mylists", next).catch(() => {});
+      return next;
+    });
+  }, []);
+
+  /**
+   * The cached list is a local convenience, so it drifts as soon as a list is
+   * removed elsewhere. Check each entry once at startup and drop the ones that
+   * are really gone. A network error is not proof of absence, so those stay.
+   */
+  const pruneMissing = useCallback(async (entries) => {
+    const checked = await Promise.all(
+      entries.map(async (entry) => {
+        try {
+          return (await readList(entry.slug)) ? entry : null;
+        } catch {
+          return entry;
+        }
+      })
+    );
+    const alive = checked.filter(Boolean);
+    if (alive.length === entries.length) { return; }
+    setRecent(alive);
+    prefs.set("mylists", alive).catch(() => {});
+  }, []);
+
   /* startup: identity, recent lists, and the #/l/slug route ---------- */
   useEffect(() => {
     (async () => {
@@ -68,12 +98,15 @@ export default function App() {
         setMe(savedMe);
       }
       const savedRecent = await prefs.get("mylists");
-      if (Array.isArray(savedRecent)) setRecent(savedRecent);
+      if (Array.isArray(savedRecent) && savedRecent.length) {
+        setRecent(savedRecent);
+        pruneMissing(savedRecent);
+      }
       const route = window.location.hash.match(/#\/l\/([a-z0-9-]+)/i);
-      if (route) setSlug(route[1].toLowerCase());
+      if (route) { setSlug(route[1].toLowerCase()); }
       setReady(true);
     })();
-  }, []);
+  }, [pruneMissing]);
 
   const remember = useCallback((list) => {
     setRecent((previous) => {
@@ -92,16 +125,10 @@ export default function App() {
   }, []);
 
   const backHome = useCallback((removedSlug) => {
-    if (removedSlug) {
-      setRecent((previous) => {
-        const next = previous.filter((entry) => entry.slug !== removedSlug);
-        prefs.set("mylists", next).catch(() => {});
-        return next;
-      });
-    }
+    if (removedSlug) { forget(removedSlug); }
     setSlug(null);
     window.location.hash = "";
-  }, []);
+  }, [forget]);
 
   const createList = useCallback(async (name) => {
     let list = newList(name, me);
@@ -109,7 +136,7 @@ export default function App() {
     for (let attempt = 0; attempt < 5; attempt++) {
       let clash = null;
       try { clash = await readList(list.slug); } catch { break; }
-      if (!clash) break;
+      if (!clash) { break; }
       list = { ...list, slug: makeSlug() };
     }
     await writeList(list);
@@ -118,7 +145,7 @@ export default function App() {
   }, [me, remember, openList]);
 
   const saveMe = (name) => {
-    if (!idRef.current) idRef.current = uid();
+    if (!idRef.current) { idRef.current = uid(); }
     const person = { id: idRef.current, name };
     setMe(person);
     prefs.set("me", person).catch(() => {});
@@ -137,7 +164,7 @@ export default function App() {
       {!ready ? null : !me ? (
         <Onboarding onDone={saveMe} />
       ) : slug ? (
-        <ListScreen slug={slug} me={me} onBack={backHome} onTouch={remember} />
+        <ListScreen slug={slug} me={me} onBack={backHome} onTouch={remember} onGone={forget} />
       ) : (
         <Home me={me} recent={recent} onOpen={openList} onCreate={createList}
           onChangeName={() => setMe(null)} />
