@@ -27,7 +27,7 @@ export const missingConfig = [
 const supabase = missingConfig.length ? null : createClient(url, key);
 
 function client() {
-  if (!supabase) throw new Error(`Missing configuration: ${missingConfig.join(", ")}`);
+  if (!supabase) { throw new Error(`Missing configuration: ${missingConfig.join(", ")}`); }
   return supabase;
 }
 
@@ -55,20 +55,20 @@ export const prefs = {
 
 export async function readList(slug) {
   const { data, error } = await client().rpc("get_list", { p_slug: slug });
-  if (error) throw error;
+  if (error) { throw error; }
   return data ?? null;
 }
 
 /** Returns the authoritative document: ours, or the stored one if it is newer. */
 export async function writeList(list) {
   const { data, error } = await client().rpc("save_list", { p_slug: list.slug, p_doc: list });
-  if (error) throw error;
+  if (error) { throw error; }
   return data ?? list;
 }
 
 export async function deleteList(slug) {
   const { error } = await client().rpc("delete_list", { p_slug: slug });
-  if (error) throw error;
+  if (error) { throw error; }
 }
 
 /**

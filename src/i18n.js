@@ -319,7 +319,7 @@ const fr = {
 const dictionaries = { en, fr };
 
 /** Browser language, narrowed to a dictionary we actually ship. */
-export const locale =
+const locale =
   typeof navigator !== "undefined" && String(navigator.language || "").toLowerCase().startsWith("fr")
     ? "fr"
     : "en";
