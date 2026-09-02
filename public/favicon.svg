@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0F6E4E"/>
+
+  <!-- handles -->
+  <path d="M 206 250 C 206 150 246 150 246 250" fill="none" stroke="#E7DCC3" stroke-width="18" stroke-linecap="round"/>
+  <path d="M 266 250 C 266 150 306 150 306 250" fill="none" stroke="#E7DCC3" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- baguette, standing up inside the bag -->
+  <g transform="rotate(-10 185 187)">
+    <rect x="162" y="95" width="46" height="185" rx="23" fill="#D9A94B"/>
+    <rect x="172" y="131" width="26" height="8" rx="4" fill="#B9822C"/>
+    <rect x="172" y="161" width="26" height="8" rx="4" fill="#B9822C"/>
+    <rect x="172" y="191" width="26" height="8" rx="4" fill="#B9822C"/>
+  </g>
+
+  <!-- carrot -->
+  <path d="M 356 260 L 340 155 Q 356 145 372 155 Z" fill="#D4711F"/>
+  <path d="M 356 155 Q 350 110 356 90 Q 362 110 356 155 Z" fill="#5E8C31"/>
+  <path d="M 350 150 Q 320 120 315 95 Q 345 115 350 150 Z" fill="#5E8C31"/>
+  <path d="M 362 150 Q 392 120 397 95 Q 367 115 362 150 Z" fill="#5E8C31"/>
+
+  <!-- bag body -->
+  <path d="M 178 250
+           Q 170 250 172 262
+           L 196 418
+           Q 198 434 214 434
+           L 298 434
+           Q 314 434 316 418
+           L 340 262
+           Q 342 250 334 250
+           Z" fill="#F5F0E7"/>
+</svg>
