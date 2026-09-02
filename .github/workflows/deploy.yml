@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Required by actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; queued runs wait rather than race.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Read at build time, not at runtime. Both values end up inside the
+      # bundle, which is expected: the anon key is public by design and is
+      # useless without a list slug.
+      VITE_BASE: /cabas/
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Fail early if the Supabase variables are missing
+        run: |
+          test -n "$VITE_SUPABASE_URL" || { echo "VITE_SUPABASE_URL is not set (Settings > Secrets and variables > Actions > Variables)"; exit 1; }
+          test -n "$VITE_SUPABASE_ANON_KEY" || { echo "VITE_SUPABASE_ANON_KEY is not set"; exit 1; }
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
