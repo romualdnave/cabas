@@ -319,6 +319,10 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
               aria-label={t.list.manageAisles}><Icon name="tag" /></button>
             <button className="cabas-icon" onClick={() => setShowShare(true)}
               aria-label={t.list.shareList}><Icon name="share" /></button>
+            {!locked && (
+              <button className="cabas-icon danger" onClick={() => setConfirmDelete(true)}
+                aria-label={t.list.deleteList}><Icon name="trash" /></button>
+            )}
           </div>
         </div>
 
