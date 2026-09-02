@@ -306,6 +306,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
   const total = list.items.length;
   const done = list.items.filter((i) => i.checked).length;
   const percent = total ? (done / total) * 100 : 0;
+  const newCategory = list.categories.find((c) => c.id === newCategoryId);
 
   return (
     <>
@@ -446,11 +447,18 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
               </button>
             </div>
             <div className="sub">
-              <select className="cabas-select" value={newCategoryId}
-                onChange={(e) => setNewCategoryId(e.target.value)} aria-label={t.item.aisle}>
-                <option value="">{t.noAisle}</option>
-                {list.categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              <div className="cabas-select-wrap">
+                <span className="dot" style={{ background: newCategory ? HUES[newCategory.color] || HUES.slate : HUES.slate }} />
+                <select className="cabas-select" value={newCategoryId}
+                  onChange={(e) => setNewCategoryId(e.target.value)} aria-label={t.item.aisle}>
+                  <option value="" style={{ color: HUES.slate }}>{t.noAisle}</option>
+                  {list.categories.map((c) => (
+                    <option key={c.id} value={c.id} style={{ color: HUES[c.color] || HUES.slate }}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <input className="cabas-input" value={newQty} maxLength={16}
                 placeholder={t.item.quantity} aria-label={t.item.quantity}
                 onChange={(e) => setNewQty(e.target.value)}

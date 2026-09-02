@@ -61,6 +61,13 @@
 .cabas-input:focus, .cabas-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .cabas-label { display:block; font-size:13px; font-weight:600; color: var(--muted); margin-bottom:6px; }
 
+.dot { width:10px; height:10px; border-radius:99px; flex:none; }
+.cabas-select-wrap { position: relative; }
+.cabas-select-wrap .cabas-select { padding-left: 30px; }
+.cabas-select-wrap .dot {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;
+}
+
 /* --- home ---------------------------------------------------------- */
 .cabas-hello { padding: 26px 0 22px; }
 .cabas-hello h1 { font-size: 34px; line-height: 1.05; }
@@ -156,7 +163,7 @@
 .cabas-add .line { display:flex; gap:8px; }
 .cabas-add .line .cabas-input { flex:1; }
 .cabas-add .sub { display:flex; gap:8px; }
-.cabas-add .sub .cabas-select { flex:1; }
+.cabas-add .sub .cabas-select-wrap { flex:1; }
 .cabas-add .sub .cabas-input { width: 110px; }
 
 /* --- messages ------------------------------------------------------ */
@@ -189,7 +196,6 @@
 /* --- aisle management ---------------------------------------------- */
 .cabas-cats { list-style:none; margin: 0 0 14px; padding: 0; }
 .cabas-cats li { display:flex; align-items:center; gap:10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
-.cabas-cats .dot { width:10px; height:10px; border-radius:99px; flex:none; }
 .cabas-cats .nm { flex:1; font-weight:500; }
 .cabas-swatches { display:flex; gap:6px; flex-wrap:wrap; }
 .cabas-sw { width: 26px; height: 26px; border-radius: 99px; border: 2px solid transparent; }

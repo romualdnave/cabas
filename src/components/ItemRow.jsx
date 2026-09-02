@@ -4,6 +4,7 @@ import Check from "./Check";
 import Icon from "./Icon";
 
 import { t } from "../i18n";
+import { HUES } from "../consts";
 
 /* ------------------------------------------------------------------ */
 /* One item row                                                        */
@@ -31,6 +32,7 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
   };
 
   if (editing) {
+    const currentCategory = categories.find((c) => c.id === categoryId);
     return (
       <li className="cabas-edit">
         <input className="cabas-input" value={name} autoFocus maxLength={60}
@@ -40,11 +42,18 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
             if (e.key === "Escape") { setEditing(false); }
           }} />
         <div className="two">
-          <select className="cabas-select" value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}>
-            <option value="">{t.noAisle}</option>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
+          <div className="cabas-select-wrap">
+            <span className="dot" style={{ background: currentCategory ? HUES[currentCategory.color] || HUES.slate : HUES.slate }} />
+            <select className="cabas-select" value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}>
+              <option value="" style={{ color: HUES.slate }}>{t.noAisle}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id} style={{ color: HUES[c.color] || HUES.slate }}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <input className="cabas-input" value={qty} maxLength={16} placeholder={t.item.quantity}
             onChange={(e) => setQty(e.target.value)} />
         </div>
