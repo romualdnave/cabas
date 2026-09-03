@@ -167,7 +167,7 @@ export default function App() {
         <ListScreen slug={slug} me={me} onBack={backHome} onTouch={remember} onGone={forget} />
       ) : (
         <Home me={me} recent={recent} onOpen={openList} onCreate={createList}
-          onChangeName={() => setMe(null)} />
+          onChangeName={() => setMe(null)} onLeave={forget} />
       )}
     </div>
   );

@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 import { t } from "../i18n";
-import { readList } from "../storage";
+import { readList, writeList } from "../storage";
+import Modal from "./Modal";
+import Icon from "./Icon";
 
 /* ------------------------------------------------------------------ */
 /* Screen: home                                                        */
@@ -16,11 +18,14 @@ const normalizeSlug = (input) =>
     .replace(/^#\/?l\//, "")
     .replace(/[^a-z0-9-]/g, "");
 
-export default function Home({ me, recent, onOpen, onCreate, onChangeName }) {
+export default function Home({ me, recent, onOpen, onCreate, onChangeName, onLeave }) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [leaving, setLeaving] = useState(null);
+  const [leaveBusy, setLeaveBusy] = useState(false);
+  const [leaveError, setLeaveError] = useState("");
 
   const join = async () => {
     const slug = normalizeSlug(code);
@@ -44,6 +49,46 @@ export default function Home({ me, recent, onOpen, onCreate, onChangeName }) {
   };
 
   const create = () => onCreate(title.trim() || t.defaultListName);
+
+  /**
+   * Leaving is local-first (the entry always disappears from this phone),
+   * but the shared document should stop listing this person as a member so
+   * the others don't keep seeing them. Best effort: if the list is
+   * unreachable, the local removal still goes through.
+   *
+   * Exception: if this person is the only member left, leaving would abandon
+   * the list with nobody attached to it. That's blocked here — deleting the
+   * list (from inside it) is the deliberate way to get rid of it instead.
+   */
+  const confirmLeave = async () => {
+    const entry = leaving;
+    if (!entry) { return; }
+    setLeaveBusy(true);
+    setLeaveError("");
+    try {
+      const doc = await readList(entry.slug);
+      if (doc) {
+        const others = doc.members.filter((m) => m.id !== me.id);
+        if (others.length === 0) {
+          setLeaveBusy(false);
+          setLeaveError(t.home.leaveLastMember(entry.name));
+          return;
+        }
+        await writeList({
+          ...doc,
+          members: others,
+          rev: (doc.rev || 0) + 1,
+          updatedAt: Date.now(),
+        });
+      }
+    } catch {
+      /* offline, or the list is already gone: nothing left to clean up */
+    } finally {
+      setLeaveBusy(false);
+    }
+    onLeave(entry.slug);
+    setLeaving(null);
+  };
 
   return (
     <div className="cabas-wrap">
@@ -96,10 +141,31 @@ export default function Home({ me, recent, onOpen, onCreate, onChangeName }) {
                   <span className="n">{entry.name}</span>
                   <span className="s">{entry.slug}</span>
                 </button>
+                <button className="cabas-icon" onClick={() => { setLeaving(entry); setLeaveError(""); }}
+                  aria-label={t.home.leaveList(entry.name)}><Icon name="x" /></button>
               </li>
             ))}
           </ul>
         </div>
+      )}
+
+      {leaving && (
+        <Modal title={t.home.leaveTitle} onClose={() => { setLeaving(null); setLeaveError(""); }}>
+          <h2>{t.home.leaveTitle}</h2>
+          <p>{t.home.leaveBody(leaving.name)}</p>
+          {leaveError && (
+            <p style={{ color: "var(--danger)", fontSize: 14, margin: "10px 0 0" }}>{leaveError}</p>
+          )}
+          <div className="acts">
+            <button className="cabas-btn" onClick={() => { setLeaving(null); setLeaveError(""); }}
+              disabled={leaveBusy}>
+              {t.cancel}
+            </button>
+            <button className="cabas-btn cabas-btn-danger" onClick={confirmLeave} disabled={leaveBusy}>
+              {leaveBusy ? "…" : t.home.leaveConfirm}
+            </button>
+          </div>
+        </Modal>
       )}
 
       <p style={{ fontSize: 13, color: "var(--faint)", marginTop: 18, textAlign: "center" }}>

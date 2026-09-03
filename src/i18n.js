@@ -55,6 +55,13 @@ const en = {
     notFound: "No list has that code. Check the hyphens.",
     unreachable: "The database isn't responding. Try again in a moment.",
     yourLists: "Your lists",
+    leaveList: (name) => `Leave ${name}`,
+    leaveTitle: "Leave this list?",
+    leaveBody: (name) =>
+      `“${name}” is removed from your lists on this phone. It still exists and the other person keeps their access — you can rejoin any time with its code.`,
+    leaveConfirm: "Leave list",
+    leaveLastMember: (name) =>
+      `You're the only member of “${name}”. Leaving would abandon it with nobody attached — open it and delete it instead if you're done with it.`,
     signedInAs: (name) => `Signed in as ${name}.`,
     changeName: "Change name",
   },
@@ -208,6 +215,13 @@ const fr = {
     notFound: "Aucune liste ne porte ce code. Vérifiez les tirets.",
     unreachable: "La base ne répond pas. Réessayez dans un instant.",
     yourLists: "Vos listes",
+    leaveList: (name) => `Quitter ${name}`,
+    leaveTitle: "Quitter cette liste ?",
+    leaveBody: (name) =>
+      `« ${name} » est retirée de vos listes sur ce téléphone. Elle continue d'exister et l'autre personne garde son accès — vous pouvez la rejoindre à tout moment avec son code.`,
+    leaveConfirm: "Quitter la liste",
+    leaveLastMember: (name) =>
+      `Vous êtes la seule personne sur « ${name} ». La quitter l'abandonnerait sans personne dessus — ouvrez-la plutôt et supprimez-la si vous n'en avez plus besoin.`,
     signedInAs: (name) => `Connecté en tant que ${name}.`,
     changeName: "Changer de prénom",
   },
