@@ -144,7 +144,7 @@ const en = {
     unreachableBody:
       "The list could not be loaded. Check your connection, then reload the page.",
     purgedTitle: "This list has been deleted.",
-    purgedBody: "It was marked done more than 30 days ago. Its data is gone.",
+    purgedBody: "It was marked done more than 7 days ago. Its data is gone.",
     missingTitle: "This list does not exist.",
     missingBody: "The code may be wrong, or the list was deleted.",
   },
@@ -298,7 +298,7 @@ const fr = {
       "La liste n'a pas pu être chargée. Vérifiez votre connexion, puis rechargez la page.",
     purgedTitle: "Cette liste a été supprimée.",
     purgedBody:
-      "Elle avait été marquée terminée il y a plus de 30 jours. Ses données sont effacées.",
+      "Elle avait été marquée terminée il y a plus de 7 jours. Ses données sont effacées.",
     missingTitle: "Cette liste n'existe pas.",
     missingBody: "Le code est peut-être erroné, ou la liste a été supprimée.",
   },

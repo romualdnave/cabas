@@ -14,7 +14,7 @@ React and Vite on one side, Supabase on the other. No server to maintain.
 - Check an item off: it stays on screen, struck through and dimmed, showing who picked it up.
 - When the last item is checked, the person who just checked it is asked whether the
   list is done. Decline and nothing changes, so editing continues. Confirm and the
-  list is locked, then its slug and all of its data are destroyed 30 days later.
+  list is locked, then its slug and all of its data are destroyed 7 days later.
 - No notion of an owner. Anyone who has joined a list has exactly the same rights,
   including finishing it or deleting it.
 - Both devices stay in sync in real time, with no reloading.
@@ -65,7 +65,7 @@ Synchronisation runs on Realtime *broadcast*: after each write, the device broad
 the document on the `list:{slug}` channel and the other receives it within a second.
 A re-read every 20 seconds, plus one when the tab regains focus, covers a lost message.
 
-The 30 day purge is a daily `cron.schedule`. `get_list` hides expired lists anyway, so
+The 7 day purge is a daily `cron.schedule`. `get_list` hides expired lists anyway, so
 the promise made to the user holds even if the cleanup falls behind.
 
 ## Deploying

@@ -10,7 +10,7 @@ import { t } from "../i18n";
 import { HUES, HUE_KEYS } from "../consts";
 import { uid } from "../helpers";
 
-const PURGE_DELAY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const PURGE_DELAY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // Realtime does the real work; this refresh is only a safety net in case a
 // broadcast message is lost.

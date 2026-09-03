@@ -1,5 +1,5 @@
 -- =============================================================================
--- Cabas — 30 day purge
+-- Cabas — 7 day purge
 -- Run in the SQL Editor, separately from schema.sql.
 --
 -- If enabling pg_cron fails, turn the extension on from Database → Extensions
