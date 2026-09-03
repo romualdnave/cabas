@@ -35,6 +35,7 @@ body {
   --muted:#6B7A70;
   --faint:#9AA79E;
   --line:#D3DAD1;
+  --line-strong:#AEBBAA;
   --accent:#0F6E4E;
   --accent-soft:#E1EFE8;
   --danger:#A62B23;
@@ -492,14 +493,15 @@ body {
   background: rgba(166,43,35,.08);
 }
 
-.cabas-check {
+button.cabas-check {
   flex: none;
   width: 26px;
   height: 26px;
   border-radius: 8px;
   margin-top: 1px;
   border: 2px solid var(--line);
-  background: var(--surface);
+  /* Not sure whether user prefers white background or none for checkbox */
+  /* background: var(--surface); */
   display: grid;
   place-items: center;
   transition: transform .12s ease, background .12s ease, border-color .12s ease;
@@ -511,6 +513,10 @@ body {
 
 .cabas-check:active:not(:disabled) {
   transform: scale(.88);
+}
+
+.cabas-check[data-on="false"] {
+  border-color: var(--line-strong);
 }
 
 .cabas-check[data-on="true"] {
