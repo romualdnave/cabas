@@ -493,6 +493,11 @@ body {
   background: rgba(166,43,35,.08);
 }
 
+.cabas-icon[data-on="true"] {
+  color: var(--accent);
+  background: rgba(0,0,0,.05);
+}
+
 button.cabas-check {
   flex: none;
   width: 26px;

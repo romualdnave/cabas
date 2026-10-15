@@ -7,6 +7,8 @@ export default function Icon({ name }) {
     tag: "M4 4h7l9 9-7 7-9-9V4Z M8 8h.01",
     plus: "M12 5v14 M5 12h14",
     x: "M6 6l12 12 M18 6L6 18",
+    eye: "M2 12c2.5-4.5 6.5-7 10-7s7.5 2.5 10 7c-2.5 4.5-6.5 7-10 7s-7.5-2.5-10-7Z M10 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+    eyeOff: "M2 12c2.5-4.5 6.5-7 10-7s7.5 2.5 10 7c-2.5 4.5-6.5 7-10 7s-7.5-2.5-10-7Z M4 4l16 16",
   }[name];
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"

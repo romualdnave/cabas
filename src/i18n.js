@@ -81,6 +81,10 @@ const en = {
     deleteFailed: "Delete failed — database unreachable",
     emptyTitle: "Nothing to buy yet.",
     emptyBlurb: "Add a first item at the bottom of the screen.",
+    hideChecked: "Hide checked items",
+    showChecked: "Show checked items",
+    allCheckedTitle: "Everything is checked.",
+    allCheckedBlurb: "Show checked items again to see them.",
     completedTitle: "List completed",
     completedBody: (completedOn, purgeOn, days) =>
       `Marked done on ${completedOn}. The code and all its data are erased for good on ${purgeOn}, in ${days} days.`,
@@ -241,6 +245,10 @@ const fr = {
     deleteFailed: "Suppression impossible — base injoignable",
     emptyTitle: "Rien à acheter pour l'instant.",
     emptyBlurb: "Ajoutez un premier article en bas de l'écran.",
+    hideChecked: "Masquer les éléments cochés",
+    showChecked: "Afficher les éléments cochés",
+    allCheckedTitle: "Tout est coché.",
+    allCheckedBlurb: "Affichez les éléments cochés pour les revoir.",
     completedTitle: "Liste terminée",
     completedBody: (completedOn, purgeOn, days) =>
       `Marquée terminée le ${completedOn}. Le code et toutes les données seront définitivement supprimés le ${purgeOn}, dans ${days} jours.`,

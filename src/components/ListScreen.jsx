@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import ItemRow from "./ItemRow";
 import AisleSheet from "./AisleSheet";
 
-import { readList, deleteList, watchList, writeList } from "../storage";
+import { prefs, readList, deleteList, watchList, writeList } from "../storage";
 import { t } from "../i18n";
 import { HUES, HUE_KEYS } from "../consts";
 import { uid } from "../helpers";
@@ -37,6 +37,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
   const declinedRef = useRef(false);
   const channelRef = useRef(null);
 
+  const [hideChecked, setHideChecked] = useState(false);
   const [showDone, setShowDone] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showAisles, setShowAisles] = useState(false);
@@ -163,6 +164,19 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
     };
   }, [slug, status, adopt]);
 
+  /* checked-items visibility: a device preference, not list data -------- */
+  useEffect(() => {
+    prefs.get("hideChecked").then((saved) => { if (saved) { setHideChecked(true); } });
+  }, []);
+
+  const toggleHideChecked = () => {
+    setHideChecked((previous) => {
+      const next = !previous;
+      prefs.set("hideChecked", next).catch(() => {});
+      return next;
+    });
+  };
+
   /* actions ----------------------------------------------------------- */
   const locked = !!(list && list.completedAt);
 
@@ -272,8 +286,10 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
       const group = item.categoryId && byId.has(item.categoryId) ? byId.get(item.categoryId) : loose;
       group.items.push(item);
     }
-    return [...known, loose].filter((group) => group.items.length > 0);
-  }, [list]);
+    return [...known, loose].filter((group) =>
+      group.items.some((item) => !hideChecked || !item.checked)
+    );
+  }, [list, hideChecked]);
 
   /* render ------------------------------------------------------------ */
   if (status === "loading") {
@@ -316,6 +332,11 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
             <Icon name="back" /> {t.list.backToLists}
           </button>
           <div style={{ display: "flex", gap: 2 }}>
+            <button className="cabas-icon" data-on={hideChecked ? "true" : "false"}
+              onClick={toggleHideChecked} aria-pressed={hideChecked}
+              aria-label={hideChecked ? t.list.showChecked : t.list.hideChecked}>
+              <Icon name={hideChecked ? "eyeOff" : "eye"} />
+            </button>
             <button className="cabas-icon" onClick={() => setShowAisles(true)}
               aria-label={t.list.manageAisles}><Icon name="tag" /></button>
             <button className="cabas-icon" onClick={() => setShowShare(true)}
@@ -400,6 +421,11 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
             <div className="display">{t.list.emptyTitle}</div>
             <p>{t.list.emptyBlurb}</p>
           </div>
+        ) : groups.length === 0 ? (
+          <div className="cabas-empty">
+            <div className="display">{t.list.allCheckedTitle}</div>
+            <p>{t.list.allCheckedBlurb}</p>
+          </div>
         ) : (
           groups.map((group) => (
             <section className="cabas-aisle" key={group.category.id || "none"}>
@@ -412,7 +438,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
                 </span>
               </div>
               <ul className="cabas-items">
-                {group.items.map((item) => (
+                {group.items.filter((item) => !hideChecked || !item.checked).map((item) => (
                   <ItemRow
                     key={item.id} item={item} categories={list.categories} locked={locked}
                     onToggle={() => toggle(item.id)}
