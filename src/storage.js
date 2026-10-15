@@ -31,6 +31,42 @@ function client() {
   return supabase;
 }
 
+/* ---------- accounts --------------------------------------------------
+ *
+ * Supabase Auth gives each person a stable id (auth.uid()), independent of
+ * how many windows or devices they have open. That id, not a locally
+ * generated one, is what `App.jsx` uses as `me.id` — the fix for the bug
+ * where opening two windows under the same display name produced two
+ * distinct members on a list.
+ * ----------------------------------------------------------------------- */
+
+/** Turns a Supabase auth user into the shape the rest of the app expects. */
+export function toPerson(user) {
+  return user ? { id: user.id, name: user.user_metadata?.name || "" } : null;
+}
+
+export const auth = {
+  async getSession() {
+    const { data } = await client().auth.getSession();
+    return data.session;
+  },
+  /** Fires once immediately, then on every sign-in/sign-out/token refresh. */
+  onChange(callback) {
+    return client().auth.onAuthStateChange((_event, session) => callback(session));
+  },
+  async signUp(email, password, name) {
+    const { error } = await client().auth.signUp({ email, password, options: { data: { name } } });
+    if (error) { throw error; }
+  },
+  async signIn(email, password) {
+    const { error } = await client().auth.signInWithPassword({ email, password });
+    if (error) { throw error; }
+  },
+  async signOut() {
+    await client().auth.signOut();
+  },
+};
+
 /* ---------- local preferences --------------------------------------- */
 
 export const prefs = {

@@ -18,7 +18,7 @@ const normalizeSlug = (input) =>
     .replace(/^#\/?l\//, "")
     .replace(/[^a-z0-9-]/g, "");
 
-export default function Home({ me, recent, onOpen, onCreate, onChangeName, onLeave }) {
+export default function Home({ me, recent, onOpen, onCreate, onSignOut, onLeave }) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -172,8 +172,8 @@ export default function Home({ me, recent, onOpen, onCreate, onChangeName, onLea
         {t.home.signedInAs(me.name)}{" "}
         <button className="cabas-btn-ghost"
           style={{ padding: "2px 4px", fontSize: 13, textDecoration: "underline" }}
-          onClick={onChangeName}>
-          {t.home.changeName}
+          onClick={onSignOut}>
+          {t.home.signOut}
         </button>
       </p>
     </div>

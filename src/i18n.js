@@ -36,12 +36,24 @@ const en = {
   remove: "Delete",
   back: "Back",
 
-  onboarding: {
+  auth: {
     title: "One list, two phones.",
-    blurb: "This name shows next to the items you check off. Nothing else is stored.",
-    label: "Your first name",
-    placeholder: "Alex",
-    submit: "Continue",
+    blurb: "Your name shows next to the items you check off.",
+    emailLabel: "Email",
+    emailPlaceholder: "you@example.com",
+    passwordLabel: "Password",
+    nameLabel: "Your first name",
+    namePlaceholder: "Alex",
+    signIn: "Log in",
+    signUp: "Create account",
+    switchToSignUp: "No account yet? Create one",
+    switchToSignIn: "Already have an account? Log in",
+    nameRequired: "Please enter a first name.",
+    invalidCredentials: "Incorrect login or password.",
+    emailTaken: "An account already exists with this email.",
+    weakPassword: "The password must be at least 6 characters.",
+    invalidEmail: "This email address looks invalid.",
+    signUpFailed: "Could not create the account. Please try again.",
   },
 
   home: {
@@ -63,7 +75,7 @@ const en = {
     leaveLastMember: (name) =>
       `You're the only member of “${name}”. Leaving would abandon it with nobody attached — open it and delete it instead if you're done with it.`,
     signedInAs: (name) => `Signed in as ${name}.`,
-    changeName: "Change name",
+    signOut: "Log out",
   },
 
   list: {
@@ -199,13 +211,24 @@ const fr = {
   remove: "Supprimer",
   back: "Retour",
 
-  onboarding: {
+  auth: {
     title: "Une liste, deux téléphones.",
-    blurb:
-      "Ce prénom apparaîtra à côté des articles que vous cochez. Rien d'autre n'est enregistré.",
-    label: "Votre prénom",
-    placeholder: "Camille",
-    submit: "Continuer",
+    blurb: "Votre prénom apparaîtra à côté des articles que vous cochez.",
+    emailLabel: "Email",
+    emailPlaceholder: "vous@exemple.com",
+    passwordLabel: "Mot de passe",
+    nameLabel: "Votre prénom",
+    namePlaceholder: "Camille",
+    signIn: "Se connecter",
+    signUp: "Créer un compte",
+    switchToSignUp: "Pas de compte ? Créez-en un",
+    switchToSignIn: "Déjà un compte ? Connectez-vous",
+    nameRequired: "Merci d'indiquer un prénom.",
+    invalidCredentials: "Identifiant ou mot de passe incorrect.",
+    emailTaken: "Un compte existe déjà avec cet email.",
+    weakPassword: "Le mot de passe doit contenir au moins 6 caractères.",
+    invalidEmail: "Cette adresse email semble invalide.",
+    signUpFailed: "Impossible de créer le compte. Réessayez.",
   },
 
   home: {
@@ -227,7 +250,7 @@ const fr = {
     leaveLastMember: (name) =>
       `Vous êtes la seule personne sur « ${name} ». La quitter l'abandonnerait sans personne dessus — ouvrez-la plutôt et supprimez-la si vous n'en avez plus besoin.`,
     signedInAs: (name) => `Connecté en tant que ${name}.`,
-    changeName: "Changer de prénom",
+    signOut: "Se déconnecter",
   },
 
   list: {

@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-import Onboarding from "./components/Onboarding";
+import Auth from "./components/Auth";
 import Home from "./components/Home";
 import Misconfigured from "./components/Misconfigured";
 import ListScreen from "./components/ListScreen";
 
-import { prefs, readList, writeList, missingConfig } from "./storage";
+import { prefs, readList, writeList, missingConfig, auth, toPerson } from "./storage";
 import { t } from "./i18n";
 import { uid } from "./helpers";
 
@@ -57,7 +57,6 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [slug, setSlug] = useState(null);
   const [recent, setRecent] = useState([]);
-  const idRef = useRef(null);
 
   /** Drops one entry from the locally cached list of recently opened lists. */
   const forget = useCallback((slug) => {
@@ -89,13 +88,14 @@ export default function App() {
     prefs.set("mylists", alive).catch(() => {});
   }, []);
 
-  /* startup: identity, recent lists, and the #/l/slug route ---------- */
+  /* startup: session, recent lists, and the #/l/slug route ------------ */
   useEffect(() => {
     (async () => {
-      const savedMe = await prefs.get("me");
-      if (savedMe && savedMe.id) {
-        idRef.current = savedMe.id;
-        setMe(savedMe);
+      if (!missingConfig.length) {
+        try {
+          const session = await auth.getSession();
+          setMe(toPerson(session?.user));
+        } catch { /* no session yet: the Auth screen will show */ }
       }
       const savedRecent = await prefs.get("mylists");
       if (Array.isArray(savedRecent) && savedRecent.length) {
@@ -107,6 +107,13 @@ export default function App() {
       setReady(true);
     })();
   }, [pruneMissing]);
+
+  /* keep `me` in step with sign-in / sign-out, from this tab or another */
+  useEffect(() => {
+    if (missingConfig.length) { return; }
+    const { data } = auth.onChange((session) => setMe(toPerson(session?.user)));
+    return () => data.subscription.unsubscribe();
+  }, []);
 
   const remember = useCallback((list) => {
     setRecent((previous) => {
@@ -144,12 +151,9 @@ export default function App() {
     openList(list.slug);
   }, [me, remember, openList]);
 
-  const saveMe = (name) => {
-    if (!idRef.current) { idRef.current = uid(); }
-    const person = { id: idRef.current, name };
-    setMe(person);
-    prefs.set("me", person).catch(() => {});
-  };
+  const signOut = useCallback(() => {
+    auth.signOut().catch(() => {});
+  }, []);
 
   if (missingConfig.length) {
     return (
@@ -162,12 +166,12 @@ export default function App() {
   return (
     <div className="cabas">
       {!ready ? null : !me ? (
-        <Onboarding onDone={saveMe} />
+        <Auth />
       ) : slug ? (
         <ListScreen slug={slug} me={me} onBack={backHome} onTouch={remember} onGone={forget} />
       ) : (
         <Home me={me} recent={recent} onOpen={openList} onCreate={createList}
-          onChangeName={() => setMe(null)} onLeave={forget} />
+          onSignOut={signOut} onLeave={forget} />
       )}
     </div>
   );

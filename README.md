@@ -1,13 +1,16 @@
 # Cabas
 
-A shopping list shared by two people, with no account to create. Each list is
-identified by a readable slug (`lemon-cabin-204`); whoever holds the link holds
-the list.
+A shopping list shared by anyone who holds the link. Each list is identified by
+a readable slug (`lemon-cabin-204`); whoever holds the link holds the list.
+Opening the app asks for an account (email/password) — that only gives each
+person a stable identity across devices, it changes nothing about how a list
+itself is shared or protected.
 
 React and Vite on one side, Supabase on the other. No server to maintain.
 
 ## What it does
 
+- Sign up or log in with an email and password — this is the account, not the list.
 - Create a list and share it through a link containing the slug generated in the app.
 - Add, edit and delete items, each with a quantity and an aisle.
 - Group items by aisle; add, rename, recolour and delete aisles.
@@ -36,6 +39,10 @@ for whoever opens it. That is deliberate. Both people are looking at the same sh
    They are separate files so that a failure to enable `pg_cron` cannot roll back
    the schema.
 3. Copy the project URL and the `anon` key from **Project Settings → API**.
+4. Under **Authentication → Providers → Email**, uncheck **Confirm email**.
+   Account creation signs the user straight in; with confirmation on, they'd
+   have to click an email link first and sign-in would fail until they did —
+   the app does not currently build a "check your email" screen for that case.
 
 ```bash
 npm install
@@ -67,6 +74,19 @@ A re-read every 20 seconds, plus one when the tab regains focus, covers a lost m
 
 The 7 day purge is a daily `cron.schedule`. `get_list` hides expired lists anyway, so
 the promise made to the user holds even if the cleanup falls behind.
+
+### Accounts
+
+Signing in uses Supabase Auth (email/password) purely for identity: `me.id` is
+`auth.uid()`, stable for a given account no matter how many tabs or devices are
+open — this is what stops the same person from showing up as two different
+members on a list. The display name lives in the account's `user_metadata`,
+not in a separate table.
+
+This is deliberately decoupled from list access: `get_list`/`save_list`/`delete_list`
+are still granted to `anon`, unchanged — a list is still protected by nothing
+but its slug, exactly as before. Accounts give people a durable identity, they
+are not a gate in front of the data.
 
 ## Deploying
 
