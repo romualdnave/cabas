@@ -348,4 +348,4 @@ const locale =
     ? "fr"
     : "en";
 
-export const t = dictionaries[locale];
+export const translations = dictionaries[locale];

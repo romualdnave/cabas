@@ -6,7 +6,7 @@ import ItemRow from "./ItemRow";
 import AisleSheet from "./AisleSheet";
 
 import { prefs, readList, deleteList, watchList, writeList } from "../storage";
-import { t } from "../i18n";
+import { translations } from "../i18n";
 import { HUES, HUE_KEYS } from "../consts";
 import { uid } from "../helpers";
 
@@ -18,7 +18,7 @@ const REFRESH_MS = 20000;
 
 const daysLeft = (timestamp) => Math.max(0, Math.ceil((timestamp - Date.now()) / 86400000));
 const formatDate = (timestamp) =>
-  new Date(timestamp).toLocaleDateString(t.dateLocale, {
+  new Date(timestamp).toLocaleDateString(translations.dateLocale, {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -67,7 +67,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
     listRef.current = next;
     setList(next);
     writingRef.current = true;
-    setSync(t.list.saving);
+    setSync(translations.list.saving);
     try {
       const saved = await writeList(next);
       setSync("");
@@ -75,7 +75,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
       if (saved && saved.rev !== next.rev) { adopt(saved); }
       else if (channelRef.current) { channelRef.current.push(next); }
     } catch {
-      setSync(t.list.saveFailed);
+      setSync(translations.list.saveFailed);
     } finally {
       writingRef.current = false;
     }
@@ -239,7 +239,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
     try {
       await deleteList(slug);
     } catch {
-      setSync(t.list.deleteFailed);
+      setSync(translations.list.deleteFailed);
       return;
     }
     setConfirmDelete(false);
@@ -257,7 +257,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
     const link = shareLink();
     try {
       if (navigator.share) {
-        await navigator.share({ title: list.name, text: t.share.text(slug), url: link });
+        await navigator.share({ title: list.name, text: translations.share.text(slug), url: link });
       } else {
         await navigator.clipboard.writeText(link);
         setCopied("link");
@@ -280,7 +280,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
   const groups = useMemo(() => {
     if (!list) { return []; }
     const known = list.categories.map((category) => ({ category, items: [] }));
-    const loose = { category: { id: null, name: t.noAisle, color: "slate" }, items: [] };
+    const loose = { category: { id: null, name: translations.noAisle, color: "slate" }, items: [] };
     const byId = new Map(known.map((group) => [group.category.id, group]));
     for (const item of list.items) {
       const group = item.categoryId && byId.has(item.categoryId) ? byId.get(item.categoryId) : loose;
@@ -295,21 +295,21 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
   if (status === "loading") {
     return (
       <div className="cabas-wrap">
-        <p style={{ color: "var(--muted)" }}>{t.loading}</p>
+        <p style={{ color: "var(--muted)" }}>{translations.loading}</p>
       </div>
     );
   }
 
   if (status === "offline" || status === "missing" || status === "purged") {
     const message = {
-      offline: [t.errors.unreachableTitle, t.errors.unreachableBody],
-      purged: [t.errors.purgedTitle, t.errors.purgedBody],
-      missing: [t.errors.missingTitle, t.errors.missingBody],
+      offline: [translations.errors.unreachableTitle, translations.errors.unreachableBody],
+      purged: [translations.errors.purgedTitle, translations.errors.purgedBody],
+      missing: [translations.errors.missingTitle, translations.errors.missingBody],
     }[status];
     return (
       <div className="cabas-wrap">
         <button className="cabas-btn-ghost" onClick={() => onBack()}>
-          <Icon name="back" /> {t.back}
+          <Icon name="back" /> {translations.back}
         </button>
         <div className="cabas-empty">
           <div className="display">{message[0]}</div>
@@ -328,22 +328,22 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
     <>
       <div className="cabas-wrap">
         <div className="cabas-top">
-          <button className="cabas-btn-ghost" onClick={() => onBack()} aria-label={t.list.backToHome}>
-            <Icon name="back" /> {t.list.backToLists}
+          <button className="cabas-btn-ghost" onClick={() => onBack()} aria-label={translations.list.backToHome}>
+            <Icon name="back" /> {translations.list.backToLists}
           </button>
           <div style={{ display: "flex", gap: 2 }}>
             <button className="cabas-icon" data-on={hideChecked ? "true" : "false"}
               onClick={toggleHideChecked} aria-pressed={hideChecked}
-              aria-label={hideChecked ? t.list.showChecked : t.list.hideChecked}>
+              aria-label={hideChecked ? translations.list.showChecked : translations.list.hideChecked}>
               <Icon name={hideChecked ? "eyeOff" : "eye"} />
             </button>
             <button className="cabas-icon" onClick={() => setShowAisles(true)}
-              aria-label={t.list.manageAisles}><Icon name="tag" /></button>
+              aria-label={translations.list.manageAisles}><Icon name="tag" /></button>
             <button className="cabas-icon" onClick={() => setShowShare(true)}
-              aria-label={t.list.shareList}><Icon name="share" /></button>
+              aria-label={translations.list.shareList}><Icon name="share" /></button>
             {!locked && (
               <button className="cabas-icon danger" onClick={() => setConfirmDelete(true)}
-                aria-label={t.list.deleteList}><Icon name="trash" /></button>
+                aria-label={translations.list.deleteList}><Icon name="trash" /></button>
             )}
           </div>
         </div>
@@ -364,7 +364,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
             <h1 className="cabas-title">{list.name}</h1>
           )}
           {!editingTitle && !locked && (
-            <button className="cabas-icon" style={{ marginTop: 4 }} aria-label={t.list.renameList}
+            <button className="cabas-icon" style={{ marginTop: 4 }} aria-label={translations.list.renameList}
               onClick={() => { setTitleDraft(list.name); setEditingTitle(true); }}>
               <Icon name="pencil" />
             </button>
@@ -375,8 +375,8 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
           <div className="cabas-count">
             <span className="big">{total - done}</span>
             <span className="lbl">
-              {t.list.itemsLeft(total - done)}
-              {total ? t.list.checkedCount(done, total) : ""}
+              {translations.list.itemsLeft(total - done)}
+              {total ? translations.list.checkedCount(done, total) : ""}
             </span>
           </div>
           <div className="cabas-bar"><i style={{ width: `${percent}%` }} /></div>
@@ -390,27 +390,27 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
               </span>
             ))}
           </span>
-          <span>{t.list.members(list.members.length)}</span>
+          <span>{translations.list.members(list.members.length)}</span>
           <button className="cabas-chip code" onClick={() => copy(slug, "code")}>
-            {copied === "code" ? t.copied : slug}
+            {copied === "code" ? translations.copied : slug}
           </button>
           {sync && <span className="cabas-sync">{sync}</span>}
         </div>
 
         {locked && (
           <div className="cabas-banner done">
-            <h2>{t.list.completedTitle}</h2>
+            <h2>{translations.list.completedTitle}</h2>
             <p>
-              {t.list.completedBody(
+              {translations.list.completedBody(
                 formatDate(list.completedAt),
                 formatDate(list.purgeAt),
                 daysLeft(list.purgeAt)
               )}
             </p>
             <div className="acts">
-              <button className="cabas-btn" onClick={reopen}>{t.list.reopen}</button>
+              <button className="cabas-btn" onClick={reopen}>{translations.list.reopen}</button>
               <button className="cabas-btn cabas-btn-danger" onClick={() => setConfirmDelete(true)}>
-                {t.list.deleteNow}
+                {translations.list.deleteNow}
               </button>
             </div>
           </div>
@@ -418,13 +418,13 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
 
         {total === 0 ? (
           <div className="cabas-empty">
-            <div className="display">{t.list.emptyTitle}</div>
-            <p>{t.list.emptyBlurb}</p>
+            <div className="display">{translations.list.emptyTitle}</div>
+            <p>{translations.list.emptyBlurb}</p>
           </div>
         ) : groups.length === 0 ? (
           <div className="cabas-empty">
-            <div className="display">{t.list.allCheckedTitle}</div>
-            <p>{t.list.allCheckedBlurb}</p>
+            <div className="display">{translations.list.allCheckedTitle}</div>
+            <p>{translations.list.allCheckedBlurb}</p>
           </div>
         ) : (
           groups.map((group) => (
@@ -464,11 +464,11 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
           <div className="cabas-add-inner">
             <div className="line">
               <input className="cabas-input" value={newName} maxLength={60}
-                placeholder={t.item.addPlaceholder}
+                placeholder={translations.item.addPlaceholder}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addItem()} />
               <button className="cabas-btn cabas-btn-primary" disabled={!newName.trim()}
-                onClick={addItem} aria-label={t.item.add}>
+                onClick={addItem} aria-label={translations.item.add}>
                 <Icon name="plus" />
               </button>
             </div>
@@ -476,8 +476,8 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
               <div className="cabas-select-wrap">
                 <span className="dot" style={{ background: newCategory ? HUES[newCategory.color] || HUES.slate : HUES.slate }} />
                 <select className="cabas-select" value={newCategoryId}
-                  onChange={(e) => setNewCategoryId(e.target.value)} aria-label={t.item.aisle}>
-                  <option value="" style={{ color: HUES.slate }}>{t.noAisle}</option>
+                  onChange={(e) => setNewCategoryId(e.target.value)} aria-label={translations.item.aisle}>
+                  <option value="" style={{ color: HUES.slate }}>{translations.noAisle}</option>
                   {list.categories.map((c) => (
                     <option key={c.id} value={c.id} style={{ color: HUES[c.color] || HUES.slate }}>
                       {c.name}
@@ -486,7 +486,7 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
                 </select>
               </div>
               <input className="cabas-input" value={newQty} maxLength={16}
-                placeholder={t.item.quantity} aria-label={t.item.quantity}
+                placeholder={translations.item.quantity} aria-label={translations.item.quantity}
                 onChange={(e) => setNewQty(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addItem()} />
             </div>
@@ -495,50 +495,50 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
       )}
 
       {showDone && (
-        <Modal title={t.done.modalTitle}
+        <Modal title={translations.done.modalTitle}
           onClose={() => { declinedRef.current = true; setShowDone(false); }}>
-          <h2>{t.done.title}</h2>
-          <p>{t.done.body(slug, formatDate(Date.now() + PURGE_DELAY_MS))}</p>
+          <h2>{translations.done.title}</h2>
+          <p>{translations.done.body(slug, formatDate(Date.now() + PURGE_DELAY_MS))}</p>
           <div className="acts">
             <button className="cabas-btn cabas-btn-primary" onClick={complete}>
-              {t.done.confirm}
+              {translations.done.confirm}
             </button>
             <button className="cabas-btn"
               onClick={() => { declinedRef.current = true; setShowDone(false); }}>
-              {t.done.keepEditing}
+              {translations.done.keepEditing}
             </button>
           </div>
         </Modal>
       )}
 
       {showShare && (
-        <Modal title={t.share.modalTitle} onClose={() => setShowShare(false)}>
-          <h2>{t.share.title}</h2>
-          <p>{t.share.blurb}</p>
+        <Modal title={translations.share.modalTitle} onClose={() => setShowShare(false)}>
+          <h2>{translations.share.title}</h2>
+          <p>{translations.share.blurb}</p>
 
-          <span className="cabas-label">{t.share.link}</span>
+          <span className="cabas-label">{translations.share.link}</span>
           <div className="cabas-row" style={{ marginBottom: 14 }}>
             <input className="cabas-input" readOnly value={shareLink()}
               onFocus={(e) => e.target.select()} />
             <button className="cabas-btn" onClick={() => copy(shareLink(), "link")}>
-              {copied === "link" ? t.copied : t.copy}
+              {copied === "link" ? translations.copied : translations.copy}
             </button>
           </div>
 
-          <span className="cabas-label">{t.share.orCode}</span>
+          <span className="cabas-label">{translations.share.orCode}</span>
           <div className="cabas-row">
             <input className="cabas-input" readOnly value={slug} onFocus={(e) => e.target.select()}
               style={{ fontFamily: "ui-monospace, Menlo, monospace" }} />
             <button className="cabas-btn" onClick={() => copy(slug, "shareCode")}>
-              {copied === "shareCode" ? t.copied : t.copy}
+              {copied === "shareCode" ? translations.copied : translations.copy}
             </button>
           </div>
 
           <div className="acts">
             {navigator.share && (
-              <button className="cabas-btn cabas-btn-primary" onClick={share}>{t.share.send}</button>
+              <button className="cabas-btn cabas-btn-primary" onClick={share}>{translations.share.send}</button>
             )}
-            <button className="cabas-btn" onClick={() => setShowShare(false)}>{t.close}</button>
+            <button className="cabas-btn" onClick={() => setShowShare(false)}>{translations.close}</button>
           </div>
         </Modal>
       )}
@@ -575,13 +575,13 @@ export default function ListScreen({ slug, me, onBack, onTouch, onGone }) {
       )}
 
       {confirmDelete && (
-        <Modal title={t.destroy.modalTitle} onClose={() => setConfirmDelete(false)}>
-          <h2>{t.destroy.title}</h2>
-          <p>{t.destroy.body(slug)}</p>
+        <Modal title={translations.destroy.modalTitle} onClose={() => setConfirmDelete(false)}>
+          <h2>{translations.destroy.title}</h2>
+          <p>{translations.destroy.body(slug)}</p>
           <div className="acts">
-            <button className="cabas-btn" onClick={() => setConfirmDelete(false)}>{t.cancel}</button>
+            <button className="cabas-btn" onClick={() => setConfirmDelete(false)}>{translations.cancel}</button>
             <button className="cabas-btn cabas-btn-danger" onClick={destroyNow}>
-              {t.destroy.confirm}
+              {translations.destroy.confirm}
             </button>
           </div>
         </Modal>

@@ -6,7 +6,7 @@ import Misconfigured from "./components/Misconfigured";
 import ListScreen from "./components/ListScreen";
 
 import { prefs, readList, writeList, missingConfig } from "./storage";
-import { t } from "./i18n";
+import { translations } from "./i18n";
 import { uid } from "./helpers";
 
 // Aisle names come from the locale, colours do not.
@@ -32,14 +32,14 @@ function newList(name, author) {
   const now = Date.now();
   return {
     slug: makeSlug(),
-    name: name || t.defaultListName,
+    name: name || translations.defaultListName,
     createdAt: now,
     updatedAt: now,
     rev: 1,
     completedAt: null,
     purgeAt: null,
     members: [{ id: author.id, name: author.name, joinedAt: now }],
-    categories: t.defaultAisles.map((name, i) => ({
+    categories: translations.defaultAisles.map((name, i) => ({
       id: uid(),
       name,
       color: DEFAULT_AISLE_COLORS[i % DEFAULT_AISLE_COLORS.length],

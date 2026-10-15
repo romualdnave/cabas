@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Check from "./Check";
 import Icon from "./Icon";
 
-import { t } from "../i18n";
+import { translations } from "../i18n";
 import { HUES } from "../consts";
 
 /* ------------------------------------------------------------------ */
@@ -46,7 +46,7 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
             <span className="dot" style={{ background: currentCategory ? HUES[currentCategory.color] || HUES.slate : HUES.slate }} />
             <select className="cabas-select" value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}>
-              <option value="" style={{ color: HUES.slate }}>{t.noAisle}</option>
+              <option value="" style={{ color: HUES.slate }}>{translations.noAisle}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id} style={{ color: HUES[c.color] || HUES.slate }}>
                   {c.name}
@@ -54,15 +54,15 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
               ))}
             </select>
           </div>
-          <input className="cabas-input" value={qty} maxLength={16} placeholder={t.item.quantity}
+          <input className="cabas-input" value={qty} maxLength={16} placeholder={translations.item.quantity}
             onChange={(e) => setQty(e.target.value)} />
         </div>
         <div className="acts">
-          <button className="cabas-btn cabas-btn-danger" onClick={() => onDelete()}>{t.remove}</button>
+          <button className="cabas-btn cabas-btn-danger" onClick={() => onDelete()}>{translations.remove}</button>
           <div style={{ display: "flex", gap: 8 }}>
-            <button className="cabas-btn" onClick={() => setEditing(false)}>{t.cancel}</button>
+            <button className="cabas-btn" onClick={() => setEditing(false)}>{translations.cancel}</button>
             <button className="cabas-btn cabas-btn-primary" disabled={!name.trim()} onClick={commit}>
-              {t.save}
+              {translations.save}
             </button>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
       <button className="cabas-check" data-on={item.checked ? "true" : "false"} disabled={locked}
         onClick={onToggle}
         aria-pressed={item.checked}
-        aria-label={item.checked ? t.item.uncheck(item.name) : t.item.check(item.name)}>
+        aria-label={item.checked ? translations.item.uncheck(item.name) : translations.item.check(item.name)}>
         <Check />
       </button>
       <div className="body">
@@ -84,18 +84,18 @@ export default function ItemRow({ item, categories, locked, onToggle, onSave, on
           <div className="qt">
             {item.qty}
             {item.qty && item.checked && item.checkedBy ? " · " : ""}
-            {item.checked && item.checkedBy ? t.item.takenBy(item.checkedBy) : ""}
+            {item.checked && item.checkedBy ? translations.item.takenBy(item.checkedBy) : ""}
           </div>
         )}
       </div>
       {!locked && (
         <div className="cabas-item-actions">
           <button className="cabas-icon" onClick={() => setEditing(true)}
-            aria-label={t.item.edit(item.name)}>
+            aria-label={translations.item.edit(item.name)}>
             <Icon name="pencil" />
           </button>
           <button className="cabas-icon danger" onClick={onDelete}
-            aria-label={t.item.remove(item.name)}>
+            aria-label={translations.item.remove(item.name)}>
             <Icon name="trash" />
           </button>
         </div>
